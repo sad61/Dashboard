@@ -1,0 +1,13 @@
+<div class="main-frame">
+  <mat-drawer-container class="example-container" autosize>
+    <mat-drawer #drawer class="example-sidenav" mode="side" opened>
+      <app-guild-nav [guilds]="guilds"></app-guild-nav>
+    </mat-drawer>
+
+    <mat-drawer-content>
+      <div class="main-grid-layout">
+        <router-outlet></router-outlet>
+      </div>
+    </mat-drawer-content>
+  </mat-drawer-container>
+</div>

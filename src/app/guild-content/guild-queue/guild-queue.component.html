@@ -1,0 +1,19 @@
+<div class="queue-tracks-container">
+  <div
+    cdkDropList
+    #todoList="cdkDropList"
+    [cdkDropListData]="tracks"
+    class="track-list"
+    (cdkDropListDropped)="drop($event)"
+  >
+    <div *ngFor="let track of tracks" class="track-container" cdkDrag>
+      <div class="track-icon-container">
+        <div
+          class="track-icon"
+          [ngStyle]="{'background-image': 'url(' + track.info.artworkUrl + ')'}"
+        ></div>
+      </div>
+      <div class="track-info">{{ track.info.title }}</div>
+    </div>
+  </div>
+</div>

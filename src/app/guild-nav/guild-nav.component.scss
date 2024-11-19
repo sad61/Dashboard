@@ -1,0 +1,10 @@
+.guild-nav-div {
+    display: flex;
+    fill: 1;
+    flex-direction: column;
+}
+
+::-webkit-scrollbar {
+    width: 0px;
+    background: transparent; /* make scrollbar transparent */
+}

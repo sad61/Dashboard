@@ -1,0 +1,23 @@
+.player-frame {
+  display: grid;
+  grid-template-rows: 80% 1fr;
+  grid-template-areas:
+    "player"
+    "info";
+  width: 100%;
+  height: 100%;
+}
+
+.player {
+  grid-area: player;
+  height: 100%;
+  width: 100%;
+}
+
+.player-info {
+  display: flex;
+  grid-area: info;
+    height: 100%;
+  width: 100%;
+  background-color: orange;
+}

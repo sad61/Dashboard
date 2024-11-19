@@ -1,0 +1,62 @@
+.guild-icon-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 8px;
+  transition: transform 0.3s ease, border-radius 0.3s ease;
+  position: relative;
+}
+
+/* Apply hover effects only if not selected */
+.guild-icon-container:not(.selected):hover .guild-icon-drop {
+  width: 50px;  
+  height: 30px;
+}
+
+.guild-icon-container:not(.selected):hover .guild-icon-button {
+  border-radius: 30%;  
+}
+
+.guild-icon-button {
+  --size: 70px;
+  width: var(--size);
+  height: var(--size);
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: transparent; 
+  border: none;
+  cursor: pointer;
+  outline: none;
+  position: relative;
+  transition: transform 0.3s ease, border-radius 0.3s ease;
+}
+
+.guild-icon-drop {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: -52px; 
+  transform: translateY(-50%);
+  width: 0px;  
+  height: 0px;
+  background-color: white;
+  border-radius: 50%;
+  transition: width 0.2s ease, height 0.2s ease; 
+}
+
+.guild-icon-drop.selected {
+  width: 50px;  
+  height: 60px;
+  border-radius: 10%;
+}
+
+.guild-icon-button.selected {
+  outline: none;
+  border-radius: 30%;
+}

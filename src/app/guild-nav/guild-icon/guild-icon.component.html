@@ -1,0 +1,11 @@
+<div class="guild-icon-container" [ngClass]="{'selected': guild === _guild}">
+  <a routerLink="/guild/{{guild.id}}">
+    <div class="guild-icon-drop" [ngClass]="{'selected': guild === _guild}"></div>
+    <button
+      class="guild-icon-button"
+      [ngClass]="{'selected': guild === _guild}"
+      (click)="updateGuild()"
+      [ngStyle]="{'background-image': 'url(' + iconURL + ')'}"
+    ></button>
+  </a>
+</div>

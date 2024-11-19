@@ -1,0 +1,66 @@
+.queue-tracks-container {
+  height: 100%;
+  flex-direction: column; 
+  justify-content: flex-start; 
+  max-height: 100%;
+  overflow-y: hidden;
+}
+
+.track-list {
+  flex-direction: column; 
+  height: 100%;
+  max-height: 600px;
+  margin: 0; 
+  padding: 0; 
+  overflow-y: hidden;;
+}
+
+.track-container {
+  padding: 20px 10px;
+  color: rgba(0, 0, 0, 0.87);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  cursor: move;
+}
+
+.track-info {
+  font-size: 14px;
+  color: white;
+  box-sizing: border-box;
+}
+
+.track-icon {
+    --size: 50px;
+  width: var(--size);
+  height: var(--size);
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  border: none;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.cdk-drag-preview {
+  box-sizing: border-box;
+  border-radius: 4px;
+  box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
+    0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.cdk-drag-placeholder {
+  opacity: 0;
+}
+
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.example-box:last-child {
+  border: none;
+}
+
+.track-list.cdk-drop-list-dragging .example-box:not(.cdk-drag-placeholder) {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}

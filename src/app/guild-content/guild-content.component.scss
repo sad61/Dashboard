@@ -1,0 +1,49 @@
+.main-frame-content {
+  display: grid;
+  grid-template-rows: 10% 1fr;
+  grid-template-columns: 80% 1fr;
+  grid-template-areas:
+    "header header"
+    "player queue";
+  height: 100%;
+  width: 100%;
+    background-color: white;
+}
+
+.header-content {
+  grid-area: header;
+  display: flex;
+  background-color: #4caf50;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  
+}
+
+.player-content {
+  grid-area: player;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f1f1f1;
+  height: 90vh;
+  width: 100%;
+    background-color: white;
+}
+
+.queue-content {
+  grid-area: queue;
+  display: flex;
+  background-color: black;
+  height: 100%;
+  width: 100%;
+}
+
+.player-content > *, .queue-content > * {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
