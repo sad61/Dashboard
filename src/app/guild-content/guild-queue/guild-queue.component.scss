@@ -1,48 +1,81 @@
-.queue-tracks-container {
+.track-list {
   height: 100%;
-  flex-direction: column; 
-  justify-content: flex-start; 
-  max-height: 100%;
-  overflow-y: hidden;
+  width: 100%;
+  flex-direction: column;
+  background-color: var(--background-color-dark);
+  box-sizing: border-box;
+  justify-content: flex-start;
+  overflow: auto;
+  scrollbar-width: none;
+  border-radius: 10px;
 }
 
-.track-list {
-  flex-direction: column; 
-  height: 100%;
-  max-height: 600px;
-  margin: 0; 
-  padding: 0; 
-  overflow-y: hidden;;
+.track-list::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  box-sizing: border-box;
+  left: 10px; 
+  right: 10px; 
+  height: 20px;
+  background: linear-gradient(to bottom, rgba(25, 28, 28, 0), #191c1c);
+  pointer-events: none;
+  border-radius: inherit; 
 }
 
 .track-container {
-  padding: 20px 10px;
-  color: rgba(0, 0, 0, 0.87);
+  max-height: 80px;
   display: flex;
-  flex-direction: row;
   align-items: center;
-  cursor: move;
+  margin-left: 10px;
+  padding: 10px;
+  cursor: pointer;
+  background-color: var(--background-color-dark);
+  overflow: auto;
+  scrollbar-width: none;
+}
+// #191C1C
+// #121212
+.track-container:hover {
+  background-color: #121212;
+}
+
+.track-artwork {
+  --size: 70px;
+  flex-shrink: 0;
+  width: var(--size);
+  height: var(--size);
+  border-radius: 8px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  margin-right: 15px;
 }
 
 .track-info {
-  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   color: white;
-  box-sizing: border-box;
+  
+  gap: 5px;
 }
 
-.track-icon {
-    --size: 50px;
-  width: var(--size);
-  height: var(--size);
-  border-radius: 50%;
-  background-size: cover;
-  background-position: center;
-  border: none;
-  display: inline-block;
-  cursor: pointer;
+.track-author {
+  color: #b3b3b3;
+}
+
+.track-author:hover {
+  text-decoration: underline;
+}
+
+.track-title,
+.track-author {
+  text-overflow: ellipsis;
 }
 
 .cdk-drag-preview {
+  border: none;
   box-sizing: border-box;
   border-radius: 4px;
   box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
@@ -54,13 +87,13 @@
 }
 
 .cdk-drag-animating {
-  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+  transition: transform 400ms cubic-bezier(0, 0, 0.2, 1);
 }
 
-.example-box:last-child {
+.track-container:last-child {
   border: none;
 }
 
-.track-list.cdk-drop-list-dragging .example-box:not(.cdk-drag-placeholder) {
-  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+.track-list.cdk-drop-list-dragging .track-container:not(.cdk-drag-placeholder) {
+  transition: transform 400ms cubic-bezier(0, 0, 0.2, 1);
 }

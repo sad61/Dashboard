@@ -19,7 +19,7 @@ import { CommonModule } from '@angular/common';
   styleUrl: './guild-queue.component.scss',
 })
 export class GuildQueueComponent {
-  @Input() tracks!: any[];
+  @Input() tracks!: any[] | undefined;
   @Input() guildID!: any;
   private socket!: Socket<any, any> | null;
 
@@ -32,24 +32,17 @@ export class GuildQueueComponent {
         console.log('TO NEM ENTRANDO AQUI?????', socket);
       },
     });
+    console.log('recebendo essa tracks ', this.tracks)
 
   }
 
+  author(track: any) {
+    console.log(track.info.author)
+  }
 
   drop(event: CdkDragDrop<string[]>) {
-    console.log(event.previousIndex, event.currentIndex)
-    if (event.previousContainer === event.container) {
-      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
-      // this.guildContentService.moveTrack(event.previousIndex, event.currentIndex)
-      this.socket?.emit('move', {guildID: this.guildID, position: {from: event.previousIndex, to: event.currentIndex}})
-    } else {
-      transferArrayItem(
-        event.previousContainer.data,
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex,
-      );
-    }
+    if (event.previousIndex === event.currentIndex) return;
+    this.socket?.emit('move', {guildID: this.guildID, position: {from: event.previousIndex, to: event.currentIndex}})
+     moveItemInArray(this.tracks as any, event.previousIndex, event.currentIndex);
   }
-
 }

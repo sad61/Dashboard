@@ -87,10 +87,11 @@ export class GuildContentService {
 
     this.updateGuildFromParams(params);
 
-    this.getQueueInit(this._guild).subscribe(({ current, tracks }) => {
-      console.log('INIT CURRENT: ', current);
-      this.updateCurrent(current);
-      this.updateTracks(tracks);
+    this.getQueueInit(this._guild).subscribe((data) => {
+      console.log('INIT CURRENT: ', data);
+      if (!data) return
+      this.updateCurrent(data.current);
+      this.updateTracks(data.tracks);
     });
   }
 
@@ -143,7 +144,7 @@ export class GuildContentService {
 
   private eventHandlerQueue(data: any): void {
     console.log(data?.current);
-    if (!data) return;
+    if (!data.current.track) return;
     this.updateCurrent(data.current);
     this.updateTracks(data.tracks);
     console.log('Queue update received:', data.current);

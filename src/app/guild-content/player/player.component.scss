@@ -1,23 +1,49 @@
 .player-frame {
   display: grid;
+  width: 100%;
+  height: 100%;
   grid-template-rows: 80% 1fr;
   grid-template-areas:
     "player"
     "info";
-  width: 100%;
-  height: 100%;
+  justify-items: stretch;
+  align-items: stretch;
+  border-radius: 10px;
+  gap: 10px;
 }
 
 .player {
   grid-area: player;
-  height: 100%;
+  display: block;
   width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  overflow: hidden;
+  align-items: stretch;
+  justify-items: stretch;
+  justify-content: stretch;
+  background-color: var(--background-color-dark);
 }
 
-.player-info {
-  display: flex;
+.player-info-frame {
   grid-area: info;
-    height: 100%;
   width: 100%;
-  background-color: orange;
+  height: 100%;
+  background-color: var(--background-color-dark);
+  border-radius: 10px;
 }
+
+.spotify-player-div.selected {
+  display: none;
+}
+
+.youtube-player-div.selected {
+  display: none;
+}
+
+
+
+// //  overflow: hidden;
+//   border-radius: 20px;
+//   transform: translateZ(0px);
+// }

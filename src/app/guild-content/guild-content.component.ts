@@ -14,10 +14,15 @@ import { PlayerComponent } from './player/player.component';
 import { GeneralService } from '../general.service';
 import { CommonModule } from '@angular/common';
 import { GuildQueueComponent } from './guild-queue/guild-queue.component';
-import { CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import {
+  CdkDrag,
+  CdkDragDrop,
+  CdkDropList,
+  moveItemInArray,
+  transferArrayItem,
+} from '@angular/cdk/drag-drop';
 import { SocketService } from '../main-frame/services/socket.service';
 import { Socket } from 'socket.io-client';
-
 
 @Component({
   selector: 'app-guild-content',
@@ -31,7 +36,8 @@ import { Socket } from 'socket.io-client';
     RouterOutlet,
     RouterLink,
     RouterLinkActive,
-    CdkDropList, CdkDrag, 
+    CdkDropList,
+    CdkDrag,
   ],
   templateUrl: './guild-content.component.html',
   styleUrl: './guild-content.component.scss',
@@ -44,11 +50,12 @@ export class GuildContentComponent {
   protected _time: number = 0;
   protected guild: any | undefined = '';
   guild$: Observable<Guild | undefined>;
+  current$: Observable<any | undefined>;
 
-    private socket!: Socket<any, any> | null;
-
+  private socket!: Socket<any, any> | null;
 
   socketSub: Subscription;
+
 
   constructor(
     private route: ActivatedRoute,
@@ -71,6 +78,13 @@ export class GuildContentComponent {
         );
       })
     );
+
+    this.current$ = this.generalService.guilds$.pipe(
+      switchMap(() => this.guildContentService.getCurrent$())
+    );
+
+
+    console.log('this.tracks ', this.tracks);
   }
 
   ngAfterViewInit(): void {
@@ -83,7 +97,6 @@ export class GuildContentComponent {
     this.subscriptions.push(
       this.guildContentService.getCurrent$().subscribe((newCurrent) => {
         this.current = newCurrent;
-        console.log(this.current);
       })
     );
     this.subscriptions.push(
@@ -101,17 +114,24 @@ export class GuildContentComponent {
   }
 
   drop(event: CdkDragDrop<string[]>) {
-    console.log(event.previousIndex, event.currentIndex)
+    console.log(event.previousIndex, event.currentIndex);
     if (event.previousContainer === event.container) {
-      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+      moveItemInArray(
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex
+      );
       // this.guildContentService.moveTrack(event.previousIndex, event.currentIndex)
-      this.socket?.emit('move', {guildID: this._guild.id, position: {from: event.previousIndex, to: event.currentIndex}})
+      this.socket?.emit('move', {
+        guildID: this._guild.id,
+        position: { from: event.previousIndex, to: event.currentIndex },
+      });
     } else {
       transferArrayItem(
         event.previousContainer.data,
         event.container.data,
         event.previousIndex,
-        event.currentIndex,
+        event.currentIndex
       );
     }
   }

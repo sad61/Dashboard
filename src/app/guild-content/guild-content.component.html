@@ -5,15 +5,17 @@
 
   <div class="player-content">
     <ng-container
-      *ngIf="current && (guild$ | async) as guild; else emptyPlayer"
+      *ngIf="(guild$ | async) as guild; else emptyPlayer"
     >
-      <app-player
-        [url]="current.track.info.uri"
+    <ng-container *ngIf="(current$ | async) as current">
+       <app-player
+        [url]="current.track?.info.uri"
         [guildID]="guild.id"
         [time]="current.time"
-        [paused]="current.track.time"
+        [paused]="current.paused"
         [source]="current.source"
       ></app-player>
+    </ng-container>
     </ng-container>
     <ng-template #emptyPlayer>
       <p>No player available</p>
@@ -21,10 +23,8 @@
   </div>
 
   <div class="queue-content">
-    <ng-container *ngIf="tracks; else emptyQueue">
-      <!-- <div *ngFor="let track of tracks">
-        {{ track.info.title }}
-      </div> -->
+    <ng-container *ngIf="tracks && (guild$ | async) as guild; else emptyQueue">
+      <app-guild-queue [tracks] = "tracks" [guildID]="guild.id"></app-guild-queue>
     </ng-container>
     <ng-template #emptyQueue>
       <p>No tracks available</p>

@@ -1,8 +1,13 @@
 <div class="player-frame">
   <div class="player">
     <ng-container *ngIf="source === 'youtube'">
-      <div id="youtube-player"></div>
+      <div class = "youtube-player-div" [ngClass] = "{'selected': this.youtubeSelected}"id="youtube-player"></div>
+    </ng-container>
+    <ng-container *ngIf="source === 'spotify'">
+      <div class = "spotify-player-div" [ngClass] = "{'selected': this.spotifySelected}"id="spotify-player"></div>
     </ng-container>
   </div>
-  <div class="player-info"></div>
+  <div class="player-info-frame">
+    <button (click) = "changeView()" style="width: 200px; height: 200px"></button>
+  </div>
 </div>

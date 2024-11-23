@@ -1,10 +1,16 @@
 .guild-nav-div {
-    display: flex;
-    fill: 1;
-    flex-direction: column;
+  display: flex;
+  fill: 1;
+  height: 100%;
+  flex-direction: column;
+  box-sizing: border-box;
+  overflow: auto;
+  scrollbar-width: none;
+  border-radius: 10px;
+  background-color: var(--background-color-dark);
 }
 
 ::-webkit-scrollbar {
-    width: 0px;
-    background: transparent; /* make scrollbar transparent */
+  width: 0px;
+  background: transparent; /* make scrollbar transparent */
 }

@@ -1,19 +1,18 @@
-<div class="queue-tracks-container">
-  <div
-    cdkDropList
-    #todoList="cdkDropList"
-    [cdkDropListData]="tracks"
-    class="track-list"
-    (cdkDropListDropped)="drop($event)"
-  >
-    <div *ngFor="let track of tracks" class="track-container" cdkDrag>
-      <div class="track-icon-container">
-        <div
-          class="track-icon"
-          [ngStyle]="{'background-image': 'url(' + track.info.artworkUrl + ')'}"
-        ></div>
+<div cdkDropList class="track-list" (cdkDropListDropped)="drop($event)">
+  <ng-container *ngIf="tracks && tracks.length; else noTracks">
+    <div *ngFor="let track of tracks">
+      <div class="track-container" cdkDrag>
+        <div class="track-artwork" [ngStyle]="{'background-image': 'url(' + track.info.artworkUrl + ')'}"></div>
+        <div class="track-info">
+          <div class="track-title" (click)="author(track)">
+            {{track.info.title}}
+          </div>
+          <div class="track-author">{{track.info.author}}</div>
+        </div>
       </div>
-      <div class="track-info">{{ track.info.title }}</div>
     </div>
-  </div>
+  </ng-container>
+  <ng-template #noTracks>
+    <div class="no-tracks-placeholder">No tracks available</div>
+  </ng-template>
 </div>
