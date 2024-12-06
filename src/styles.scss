@@ -6,5 +6,36 @@ html, body { height: 100%; overflow: hidden;}
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 :root {
-  --background-color-dark: #131616;
+  --background-color-dark: #121212;
+
+@include mat.tooltip-overrides((
+  supporting-text-size:1.1rem,
+  container-color: #0A0A0A,
+  supporting-text-color: white,
+  container-shape: 100px,
+  ));
+
+
+@include mat.slider-overrides((
+    ripple-color: white,
+    hover-state-layer-color: rgba(255, 255, 255, 0),
+    active-track-color: white,
+    handle-color: rgba(255, 255, 255, 0), 
+    focus-state-layer-color: rgba(255, 255, 255, 0),
+    focus-handle-color: rgba(255, 255, 255, 0),
+    with-overlap-handle-outline-color: white,
+    disabled-handle-color: white,
+    with-tick-marks-inactive-container-color:white,
+    with-tick-marks-active-container-color:white,
+    disabled-active-track-color:white,
+    disabled-inactive-track-color:white,
+    label-container-color:white,
+    label-label-text-color:white,
+    with-tick-marks-disabled-container-color:white,
+
+    // value-indicator-width: 100px,
+    // value-indicator-height: 100px,
+  ));
 }
+
+//121212

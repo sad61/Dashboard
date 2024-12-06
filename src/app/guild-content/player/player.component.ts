@@ -8,65 +8,78 @@ import {
   ChangeDetectorRef,
 } from '@angular/core';
 import { environment } from '../../../environment';
-import { Subscription } from 'rxjs';
-import { PlayerService } from './services/player.service';
+import { Subscription, takeUntil } from 'rxjs';
 import { SocketService } from '../../main-frame/services/socket.service';
 import { Socket } from 'socket.io-client';
 import { CommonModule } from '@angular/common';
+import { PlayerService } from './services/player.service';
+import { GeneralService } from '../../general.service';
+import { PlayerInfoComponent } from './player-info/player-info.component';
+import { GuildContentService } from '../services/guild-content.service';
 
 declare var YT: any;
 
 @Component({
   selector: 'app-player',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, PlayerInfoComponent],
   templateUrl: './player.component.html',
   styleUrls: ['./player.component.scss'],
 })
+
+// FOCUS WINDOW
 export class PlayerComponent implements AfterViewInit, OnChanges {
-  @Input() url!: string;
+  @Input() current!: any;
   @Input() guildID!: string;
-  @Input() time!: number;
-  @Input() paused!: boolean;
-  @Input() source!: string;
   private player: any;
   private videoId: string = '';
-  private socket!: Socket<any, any> | null;
 
   private firstInitialized!: any;
-  private suppressStateChange = false;
+  private suppressStateChange!: boolean;
   private suppressSeek = false;
-  private spotifyAlreadyInitialized: boolean = false;
 
   private previousSource!: string;
 
-  // ADICIONAR O PLAYER A UM SUBJECT
   private socketSub!: Subscription;
 
   private spotifyController: any;
-  private spotifyIframeAPI: any;
+
+  private spotifyPaused: boolean = false;
+  private spotifyPosition!: number;
 
   spotifySelected!: boolean;
   youtubeSelected!: boolean;
 
+  private IFrame!: any;
+
+  private synchronizing!: boolean;
+
   constructor(
     private httpService: HttpClient,
-    private playerService: PlayerService,
     private socketService: SocketService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private playerService: PlayerService,
+    private generalService: GeneralService,
+    private guildContentService: GuildContentService
   ) {
-    this.socketSub = this.socketService.getSocket$().subscribe({
-      next: (socket) => {
-        this.socket = socket;
-      },
+    this.playerService.getIFrame$().subscribe((iframe) => {
+      this.IFrame = iframe;
     });
+
+    this.playerService.getSynchronizing$().subscribe((synch) => {
+      this.synchronizing = synch;
+    });
+
+    this.playerService.getSuppressStateChange().subscribe((suppress) => {
+      this.suppressStateChange = suppress
+    })
   }
 
   private stateDueToInit: boolean = true;
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['url']) {
-      if (this.previousSource === this.source) {
+    if (changes['current']) {
+      if (this.previousSource === this.current?.track?.info?.sourceName) {
         this.updatePlayerContent();
       } else {
         this.reinitializePlayer();
@@ -75,7 +88,7 @@ export class PlayerComponent implements AfterViewInit, OnChanges {
   }
 
   private updatePlayerContent(): void {
-    switch (this.source) {
+    switch (this.current?.track?.info?.sourceName) {
       case 'youtube':
         this.loadYouTubeContent();
         break;
@@ -88,22 +101,23 @@ export class PlayerComponent implements AfterViewInit, OnChanges {
   private reinitializePlayer(): void {
     this.destroyPreviousPlayer();
     this.initializePlayer();
-    this.previousSource = this.source;
+    this.previousSource = this.current.track.info.sourceName;
+    this.playerService.updateSource$(this.previousSource);
     this.cdr.detectChanges();
   }
 
   private loadYouTubeContent(): void {
-    const videoId = this.extractVideoId(this.url);
+    const videoId = this.extractVideoId(this.current.track.info.uri);
     this.player.loadVideoById(videoId);
     this.player.playVideo();
   }
 
   public changeView() {
-    this.player.seekTo(30)
+    this.spotifyController.seek(30);
   }
 
   private loadSpotifyContent(): void {
-    const uri = this.convertUrlToUri(this.url);
+    const uri = this.convertUrlToUri(this.current.track.info.uri);
     if (uri) {
       this.spotifyController.loadUri(uri);
       this.spotifyController.togglePlay();
@@ -111,15 +125,16 @@ export class PlayerComponent implements AfterViewInit, OnChanges {
   }
 
   private initializePlayer(): void {
-    switch (this.source) {
+    switch (this.current?.track?.info?.sourceName) {
       case 'youtube':
+        this.playerService.updateSource$(this.current.track.info.sourceName);
         this.loadYouTubePlayer();
         this.youtubeSelected = true;
         this.spotifySelected = false;
         break;
       case 'spotify':
-        const uri = this.convertUrlToUri(this.url);
-
+        this.playerService.updateSource$(this.current.track.info.sourceName);
+        const uri = this.convertUrlToUri(this.current.track.info.uri);
         this.loadSpotifyPlayer(uri);
         this.spotifySelected = true;
         this.youtubeSelected = false;
@@ -129,10 +144,13 @@ export class PlayerComponent implements AfterViewInit, OnChanges {
   }
 
   ngOnDestroy(): void {
-    this.destroyPreviousPlayer();
+    console.log('Destroying player onDestroy');
+    this.guildContentService.updatePlaying$(false);
+    this.destroyPreviousPlayer(true);
   }
 
-  private destroyPreviousPlayer(): void {
+  private destroyPreviousPlayer(force?: boolean): void {
+    console.log('Destroying player');
     if (this.previousSource === 'spotify' && this.spotifyController) {
       this.spotifyController.destroy();
       const existingSpotifyScript = document.getElementById(
@@ -143,14 +161,17 @@ export class PlayerComponent implements AfterViewInit, OnChanges {
       }
     } else if (this.previousSource === 'youtube' && this.player) {
       this.player.destroy();
+      this.playerService.destroyTimeInterval();
       this.player = null;
     }
+    this.playerService.updateSource$(null);
   }
 
   ngAfterViewInit(): void {
-    this.previousSource = this.source;
+    console.log('uaiiii so');
+    this.previousSource = this.current?.track?.info?.sourceName;
     this.initializePlayer();
-    this.setupListener(this.guildID);
+    this.playerService.setupListener(this.guildID);
     window.addEventListener('resize', this.onWindowResize.bind(this));
   }
 
@@ -172,7 +193,6 @@ export class PlayerComponent implements AfterViewInit, OnChanges {
     }
     (window as any).onYouTubeIframeAPIReady = () => {
       this.initializeYoutubePlayer();
-      this.playerService.setPlayerInstance(this.player);
     };
   }
 
@@ -197,18 +217,20 @@ export class PlayerComponent implements AfterViewInit, OnChanges {
       this.initializeSpotifyPlayer(uri, (window as any).SpotifyIframe);
       return;
     }
-    if (this.spotifyAlreadyInitialized) {
-      this.initializeSpotifyPlayer(uri, this.spotifyIframeAPI);
+    if (this.IFrame) {
+      this.initializeSpotifyPlayer(uri, this.IFrame);
       return;
     }
     (window as any).onSpotifyIframeApiReady = (IFrameAPI: any) => {
       this.initializeSpotifyPlayer(uri, IFrameAPI);
-      this.spotifyIframeAPI = IFrameAPI;
-      this.spotifyAlreadyInitialized = true;
+      this.playerService.updateIFrame$(IFrameAPI);
     };
   }
 
-  private initializeSpotifyPlayer(uri: string, IFrameAPI?: any): void {
+  private async initializeSpotifyPlayer(
+    uri: string,
+    IFrameAPI?: any
+  ): Promise<void> {
     this.cdr.detectChanges();
     const element = document.getElementById('spotify-player');
     if (!element) {
@@ -218,7 +240,7 @@ export class PlayerComponent implements AfterViewInit, OnChanges {
 
     const API = IFrameAPI;
 
-    const playerContainer = document.querySelector('.player');
+    const playerContainer = document.querySelector('.spotify-div');
     const width = playerContainer?.clientWidth || 1600;
     const height = playerContainer?.clientHeight || 900;
     const options = {
@@ -229,13 +251,47 @@ export class PlayerComponent implements AfterViewInit, OnChanges {
 
     API.createController(element, options, (EmbedController: any) => {
       this.spotifyController = EmbedController;
-      if (!this.paused) this.spotifyController.play();
+      this.playerService.updateEmbedController$(EmbedController);
+
+      EmbedController.addListener('ready', async () => {
+        const delay = (ms: number) =>
+          new Promise((resolve) => setTimeout(resolve, ms));
+
+        await delay(3000);
+        if (this.current.paused) await this.spotifyController.pause();
+        if (this.current.time)
+          await this.spotifyController.seek(this.current.time / 1000);
+      });
+
+      EmbedController.addListener('playback_update', (e: any) => {
+        this.playerService.updatePlaybackPosition$(e.data.position);
+        if (e.data.isPaused) {
+          this.playerService.pauseSpotifyPlayer(true, this.guildID);
+          this.spotifyPaused = true;
+        }
+
+        if (this.spotifyPaused && !e.data.isPaused) {
+          this.playerService.resumeSpotifyPlayer(true, this.guildID);
+          this.spotifyPaused = false;
+        }
+
+        // console.log(this.spotifyPosition, e.data.position)
+        // console.log(Math.abs(e.data.position - this.spotifyPosition) > 400, ' should i emit resume?')
+        if (Math.abs(e.data.position - this.spotifyPosition) > 400) {
+          this.playerService.emitSpotifyCurrentTime(
+            this.guildID,
+            e.data.position
+          );
+        }
+        this.spotifyPosition = e.data.position;
+      });
+      // if (!this.current.paused) this.spotifyController.play();
     });
   }
 
   private async initializeYoutubePlayer(): Promise<void> {
-    if (!this.url) return;
-    this.videoId = this.extractVideoId(this.url);
+    if (!this.current.track.info.uri) return;
+    this.videoId = this.extractVideoId(this.current.track.info.uri);
 
     const { width, height } = await this.getPlayerDimensionsAfterDelay(10);
     console.log('Initializing youtube player');
@@ -244,7 +300,7 @@ export class PlayerComponent implements AfterViewInit, OnChanges {
       width: width,
       videoId: this.videoId,
       playerVars: {
-        autoplay: 1,
+        autoplay: this.current.paused ? 0 : 1,
         controls: 1,
         rel: 0,
         modestbranding: 1,
@@ -252,10 +308,12 @@ export class PlayerComponent implements AfterViewInit, OnChanges {
         origin: window.location.origin,
       },
       events: {
-        onReady: (event: any) => this.onPlayerReady(event, this.time / 1000),
+        onReady: (event: any) =>
+          this.onPlayerReady(event, this.current.time / 1000),
         onStateChange: this.onPlayerStateChange.bind(this),
       },
     });
+    this.playerService.updatePlayer$(this.player);
   }
 
   private getPlayerDimensionsAfterDelay(
@@ -275,7 +333,7 @@ export class PlayerComponent implements AfterViewInit, OnChanges {
     if (this.player) {
       this.player.loadVideoById(videoID);
       setTimeout(() => {
-        this.player.seekTo(this.time / 1000, true);
+        this.player.seekTo(this.current?.time / 1000, false);
       }, 500);
     }
   }
@@ -300,39 +358,44 @@ export class PlayerComponent implements AfterViewInit, OnChanges {
     }
     console.log('Calling to play?');
     this.player.playVideo();
+
+    this.playerService.createTimeInterval();
   }
 
   onPlayerStateChange(event: any): void {
-    if (event.data === YT.PlayerState.BUFFERING) {
+    // console.log(event.data)
+    if (event.data === -1) {
+      this.player.playVideo()
       return;
     }
 
-    if (event.data === -1) return;
-
     if (this.suppressStateChange) {
-      this.suppressStateChange = false;
-      return
+      this.playerService.updateSuppressStateChange$(false)
+      return;
+    }
+
+    if (this.synchronizing) {
+      this.playerService.updateSynchronizing$(false);
+      return;
     }
 
     if (this.stateDueToInit) {
+      if (event.data === YT.PlayerState.PLAYING && this.current?.paused)
+        this.player.pauseVideo();
       this.stateDueToInit = false;
       return;
     }
 
-    if (this.suppressSeek) {
-      this.suppressSeek = false;
-      return;
-    }
-
     if (event.data === YT.PlayerState.PAUSED && !this.player.isMuted()) {
+      this.playerService.destroyTimeInterval();
       console.log('Inside state change and pausing.');
-      this.pauseYoutubePlayer(true);
+      this.playerService.pauseYoutubePlayer(true, this.guildID);
     }
 
-    if (event.data === YT.PlayerState.PLAYING) {
-      console.log('Supress seek: ', this.suppressSeek)
+    if (event.data === YT.PlayerState.PLAYING && !this.player.isMuted()) {
+      this.playerService.createTimeInterval();
       console.log('Inside state change and resuming.');
-      this.resumeYoutubePlayer(true);
+      this.playerService.resumeYoutubePlayer(true, this.guildID);
     }
   }
 
@@ -344,87 +407,6 @@ export class PlayerComponent implements AfterViewInit, OnChanges {
     if (this.player) {
       this.player.setSize(newWidth, newHeight);
     }
-  }
-
-  pauseYoutubePlayer(emitToServer: boolean): void {
-    if (emitToServer) {
-      this.socket?.emit('pause', { guildID: this.guildID, pause: true });
-      console.log('Emiting pause event: ', true);
-    }
-
-    this.player.pauseVideo();
-  }
-
-  pauseSpotifyPlayer(emitToServer: boolean): void {
-    if (emitToServer) {
-      this.socket?.emit('pause', { guildID: this.guildID, pause: true });
-      console.log('Emiting pause event: ', true);
-    }
-
-    this.spotifyController.pause();
-  }
-
-  resumeYoutubePlayer(emitToServer: boolean, time?: number): void {
-    if (emitToServer) {
-      this.socket?.emit('resume', { guildID: this.guildID, resume: false, time: this.player.getCurrentTime()});
-      console.log('Emiting resume event: ', true);
-    }
-
-    if (time) {
-      this.player.seekTo(time)
-    }
-    this.player.playVideo();
-    return;
-  }
-
-  resumeSpotifyPlayer(emitToServer: boolean): void {
-    if (emitToServer)
-      this.socket?.emit('pause', { guildID: this.guildID, pause: false });
-    console.log('Emiting pause event: ', false);
-    this.spotifyController.resume();
-  }
-
-  private setupListener(guildID: string): void {
-    if (!this.socket || !guildID) return;
-
-    this.socket.off(`playerPause:${guildID}`);
-    this.socket.off(`playerResume:${guildID}`);
-
-    const playerActions = {
-      spotify: {
-        pause: () => this.pauseSpotifyPlayer(false),
-        resume: (time: number) => this.resumeSpotifyPlayer(false),
-        seek: (time: number) => this.spotifyController.seek(time),
-      },
-      youtube: {
-        pause: () => this.pauseYoutubePlayer(false),
-        resume: (time: number) => this.resumeYoutubePlayer(false, time),
-        seek: (time: number) => this.player.seekTo(time),
-      },
-    };
-
-    // this.socket.on(`playerSeek:${guildID}`, (data: any) => {
-    //   const source = this.source as 'spotify' | 'youtube';
-    //   this.suppressSeek = true;
-    //   console.log('Received seek event from server.');
-    //   playerActions[source]?.['seek']?.(data.time);
-    // });
-
-
-    this.socket.on(`playerResume:${guildID}`, (data: any) => {
-      this.suppressStateChange = true; 
-      const source = this.source as 'spotify' | 'youtube';
-      console.log('Received resume event from server.', data);
-
-      playerActions[source]?.['resume']?.(data.time);
-    })
-
-    this.socket.on(`playerPause:${guildID}`, (data: any) => {
-      this.suppressStateChange = true;
-      const source = this.source as 'spotify' | 'youtube';
-      console.log('Received pause event from server.');
-      playerActions[source]?.['pause']?.();
-    });
   }
 
   playVideo(): void {

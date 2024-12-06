@@ -1,0 +1,33 @@
+<div class="info-frame">
+  <div class="info-track">
+    <div class="track-title">{{ track.info.title }}</div>
+    <div class="track-options">
+      <button
+        mat-icon-button
+        #tooltip="matTooltip"
+        matTooltip="Lyrics for the current track"
+      >
+        <mat-icon>lyrics</mat-icon>
+      </button>
+      <button
+        mat-icon-button
+        #tooltip="matTooltip"
+        matTooltip="Synchronize player"
+        (click)="synchronizePlayer()"
+      >
+        <mat-icon class = "mock-test">sync</mat-icon>
+      </button>
+    </div>
+  </div>
+  <div class="info-user-frame">
+    <div class="info-user">
+      <div
+        class="info-user-icon"
+        [ngStyle]="{ 'background-image': 'url(' + track.requester.avatarURL + ')' }"
+      ></div>
+      <div class="info-user-details">
+        <div class="info-user-username">{{ track.requester.username }}</div>
+      </div>
+    </div>
+  </div>
+</div>

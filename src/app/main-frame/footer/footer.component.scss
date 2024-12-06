@@ -1,0 +1,139 @@
+.footer-main-frame {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  grid-template-columns: 20% 60% 20%;
+  grid-template-areas: "track-preview track-controls track-options";
+  color: white;
+  align-items: center;
+  align-content: center;
+  box-sizing: border-box;
+}
+
+.footer-track-preview {
+  grid-area: track-preview;
+  width: 100%;
+  height: 100%;
+  padding-left: 10px;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer-track-controls {
+  grid-area: track-controls;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  gap: 10px;
+  box-sizing: border-box;
+  position: relative;
+  user-select: none;
+}
+
+.footer-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  position: absolute;
+  top: 15px;
+  box-sizing: border-box;
+}
+
+.footer-controls-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  width: auto;
+  height: auto;
+}
+
+.footer-button-icon {
+  transition: transform 200ms ease;
+}
+.footer-button-icon:hover {
+  transform: scale(1.05);
+}
+
+.footer-button-icon:active {
+  transform: scale(1);
+}
+.footer-controls-button {
+  background-color: rgba(255, 255, 255, 0);
+}
+
+.footer-controls-button.central {
+  background-color: white;
+}
+
+.footer-progressbar {
+  display: flex;
+  margin-top: 50px;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  gap: 10px;
+}
+
+.footer-controls-icon.small {
+  height: auto;
+  width: auto;
+  font-size: 1.8rem;
+}
+
+.footer-controls-icon.highlighted {
+  color: green;
+}
+
+.footer-controls-icon.medium {
+  height: auto;
+  width: auto;
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.footer-controls-icon.big {
+  height: auto;
+  width: auto;
+  font-size: 2.5rem;
+  color: black;
+}
+
+// .footer-controls-icon.big.pause {
+// color: white
+// }
+
+
+.footer-controls-icon.pause {
+  height: auto;
+  width: auto;
+}
+
+.footer-controls-icon {
+  z-index: 1;
+  transition: color ease;
+}
+
+.footer-controls-icon:not(.big, .highlighted):hover {
+  color: white;
+}
+
+.footer-controls-icon.highlighted {
+  color: #1db954;
+}
+
+mat-slider {
+  width: 60%;
+}
+
+.footer-track-options {
+  grid-area: track-options;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+}

@@ -8,11 +8,19 @@ import { environment } from '../environment';
 })
 export class GeneralService {
   protected _guilds$: BehaviorSubject<Map<string, any>> = new BehaviorSubject(new Map<string, any>);
-  private readonly memberID = '370346029553287178';
+  private readonly userID = '370346029553287178';
+  private _user$ = new BehaviorSubject<any>(null)
   protected guildCache = new Map<string, string>();
+
   constructor(private httpService: HttpClient) {
     this.getGuild();
+    this.getUser();
   }
+
+  get user$() {
+    return this._user$.asObservable()
+  }
+  
 
   get guilds$() {
     return this._guilds$.asObservable();
@@ -23,10 +31,27 @@ export class GeneralService {
     return this.guildCache.get(id);
   }
 
+  getUser() {
+    this.httpService
+      .get<any>(
+        `${environment.API_ENDPOINT}/discord/user?userID=${this.userID}`
+      )
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
+          console.error('Error fetching member data:', error.message);
+          return throwError(() => new Error('Failed to fetch member data.'));
+        })
+      )
+      .subscribe((data: any) => {
+        this._user$.next(data)
+      });
+  }
+  
+
   getGuild() {
     this.httpService
       .get<any>(
-        `${environment.API_ENDPOINT}/discord/guilds?memberID=${this.memberID}`
+        `${environment.API_ENDPOINT}/discord/guilds?userID=${this.userID}`
       )
       .pipe(
         catchError((error: HttpErrorResponse) => {
@@ -35,7 +60,7 @@ export class GeneralService {
         })
       )
       .subscribe((data: any) => {
-        for (const d of data) {
+        for (const d of data.guilds) {
           console.log(d.id, d.name)
           this.guildCache.set(d.id, d);
         }

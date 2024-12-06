@@ -1,13 +1,14 @@
 .main-frame-content {
   display: grid;
-  grid-template-rows: 5% 1fr;
-  grid-template-columns: 80% 1fr;
+  grid-template-rows: 8% 1fr;
+  grid-template-columns: 70% 1fr;
   grid-template-areas:
     "header header"
     "player queue";
   height: 100%;
   width: 100%;
-  background-color: #0A0A0A;
+
+  background-color: black;
 }
 
 .header-content {
@@ -17,32 +18,37 @@
   align-items: center;
   justify-content: space-between;
   box-sizing: border-box;
-  margin: 0px 10px 0px 10px;
+  margin: 10px 10px 0px 10px;
   border-radius: 10px;
 }
 
 .player-content {
   grid-area: player;
   display: flex;
-    align-items: stretch; 
-  justify-content: stretch; 
+  align-items: stretch;
+  justify-content: stretch;
+
   box-sizing: border-box;
   height: 100%;
   width: 100%;
-  padding:  10px 0px 0px 10px;
+  padding: 10px 0px 0px 10px;
   border-radius: 10px;
 }
 
 .queue-content {
-  position:relative;
+  position: relative;
   display: flex;
   grid-area: queue;
   max-height: 100%;
-  overflow-y: scroll;
-  align-items: stretch;
+  margin: 10px 10px 0 10px;
+  background-color: var(--background-color-dark);
+  flex-shrink: 0;
+  overflow: hidden;
   scrollbar-width: none;
+  align-items: flex-start;
   border-radius: 10px;
   padding: 10px 10px 0px 10px;
+    box-sizing: border-box;
 }
 
 .player-content > *,

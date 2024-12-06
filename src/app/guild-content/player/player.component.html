@@ -1,13 +1,27 @@
 <div class="player-frame">
   <div class="player">
-    <ng-container *ngIf="source === 'youtube'">
-      <div class = "youtube-player-div" [ngClass] = "{'selected': this.youtubeSelected}"id="youtube-player"></div>
+    <ng-container *ngIf="current?.track?.info?.sourceName === 'youtube'; else emptySource">
+      <div class="youtube-player">
+        <div id="youtube-player"></div>
+      </div>
     </ng-container>
-    <ng-container *ngIf="source === 'spotify'">
-      <div class = "spotify-player-div" [ngClass] = "{'selected': this.spotifySelected}"id="spotify-player"></div>
+    <ng-container *ngIf="current?.track?.info?.sourceName === 'spotify';else emptySource">
+      <div class="spotify-div">
+        <div id="spotify-player"></div>
+      </div>
     </ng-container>
+    <ng-template #emptySource>
+
+    </ng-template>
   </div>
   <div class="player-info-frame">
-    <button (click) = "changeView()" style="width: 200px; height: 200px"></button>
+    <ng-container *ngIf="current?.track">
+      <app-player-info
+        [track]="current?.track"
+        [guildID]="guildID"
+        [source]="current?.track?.info?.sourceName"
+      ></app-player-info>
+    </ng-container>
+    <!-- <button (click) = "changeView()" style="width: 200px; height: 200px"></button> -->
   </div>
 </div>

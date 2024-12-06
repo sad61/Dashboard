@@ -29,15 +29,9 @@ import { Socket } from 'socket.io-client';
   standalone: true,
   imports: [
     CommonModule,
-    ButtonsComponent,
     PlayerComponent,
     GuildQueueComponent,
     MatButtonModule,
-    RouterOutlet,
-    RouterLink,
-    RouterLinkActive,
-    CdkDropList,
-    CdkDrag,
   ],
   templateUrl: './guild-content.component.html',
   styleUrl: './guild-content.component.scss',
@@ -51,11 +45,11 @@ export class GuildContentComponent {
   protected guild: any | undefined = '';
   guild$: Observable<Guild | undefined>;
   current$: Observable<any | undefined>;
+  previousTrack!: any;
 
   private socket!: Socket<any, any> | null;
 
   socketSub: Subscription;
-
 
   constructor(
     private route: ActivatedRoute,
@@ -73,6 +67,7 @@ export class GuildContentComponent {
     this.guild$ = this.route.paramMap.pipe(
       switchMap((params) => {
         const guildId = params.get('id');
+        console.log('to no guildcontentetetetete ', guildId)
         return this.generalService.guilds$.pipe(
           map((guildMap) => guildMap.get(guildId!))
         );
@@ -82,9 +77,15 @@ export class GuildContentComponent {
     this.current$ = this.generalService.guilds$.pipe(
       switchMap(() => this.guildContentService.getCurrent$())
     );
-
-
     console.log('this.tracks ', this.tracks);
+  }
+
+  ngOnInit() {
+    this.guildContentService.getPreviousTrack$().subscribe((previousTrack) => {
+      console.log('dentro do subscribe', previousTrack);
+      this.previousTrack = previousTrack;
+      this.cdr.detectChanges()
+    });
   }
 
   ngAfterViewInit(): void {
@@ -101,6 +102,7 @@ export class GuildContentComponent {
     );
     this.subscriptions.push(
       this.guildContentService.getTracks$().subscribe((newTracks) => {
+        console.log('Listening to new tracks update?? ', newTracks)
         this.tracks = newTracks;
       })
     );

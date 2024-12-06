@@ -1,77 +1,69 @@
-.track-list {
+.queue-frame {
+  display: flex;
   height: 100%;
   width: 100%;
+  flex-direction: column;
+  gap: 10px;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  user-select: none;
+}
+
+.queue-previous-frame {
+  display: flex;
+  flex-direction: column;
+}
+
+.queue-text {
+  font-size: 1.3rem;
+  padding: 10px;
+}
+
+.track-list {
+  flex: 1;
+  flex-shrink: 0;
   flex-direction: column;
   background-color: var(--background-color-dark);
   box-sizing: border-box;
   justify-content: flex-start;
   overflow: auto;
-  scrollbar-width: none;
   border-radius: 10px;
 }
 
+.track-list::-webkit-scrollbar {
+  width: 8px; 
+}
+
+.track-list::-webkit-scrollbar-track {
+  background: transparent; 
+  border-radius: 10px;
+}
+
+.track-list::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.4);
+  border-radius: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.track-list::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.6);
+}
+
+.track-list::-webkit-scrollbar-button {
+  display: none; 
+}
+
 .track-list::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: 0;
   box-sizing: border-box;
-  left: 10px; 
-  right: 10px; 
+  left: 10px;
+  right: 10px;
   height: 20px;
   background: linear-gradient(to bottom, rgba(25, 28, 28, 0), #191c1c);
   pointer-events: none;
-  border-radius: inherit; 
-}
-
-.track-container {
-  max-height: 80px;
-  display: flex;
-  align-items: center;
-  margin-left: 10px;
-  padding: 10px;
-  cursor: pointer;
-  background-color: var(--background-color-dark);
-  overflow: auto;
-  scrollbar-width: none;
-}
-// #191C1C
-// #121212
-.track-container:hover {
-  background-color: #121212;
-}
-
-.track-artwork {
-  --size: 70px;
-  flex-shrink: 0;
-  width: var(--size);
-  height: var(--size);
-  border-radius: 8px;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  margin-right: 15px;
-}
-
-.track-info {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  color: white;
-  
-  gap: 5px;
-}
-
-.track-author {
-  color: #b3b3b3;
-}
-
-.track-author:hover {
-  text-decoration: underline;
-}
-
-.track-title,
-.track-author {
-  text-overflow: ellipsis;
+  border-radius: inherit;
 }
 
 .cdk-drag-preview {
@@ -87,7 +79,7 @@
 }
 
 .cdk-drag-animating {
-  transition: transform 400ms cubic-bezier(0, 0, 0.2, 1);
+  transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
 }
 
 .track-container:last-child {
@@ -95,5 +87,5 @@
 }
 
 .track-list.cdk-drop-list-dragging .track-container:not(.cdk-drag-placeholder) {
-  transition: transform 400ms cubic-bezier(0, 0, 0.2, 1);
+  transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
 }

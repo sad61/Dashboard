@@ -1,0 +1,16 @@
+<div
+  class="track-container"
+  [ngClass]="{ 'no-hover': disableHoverEffects }"
+>
+  <div class="track-artwork-frame">
+    <div
+      class="track-artwork"
+      [ngStyle]="{ 'background-image': 'url(' + track.info.artworkUrl + ')' }"
+    ></div>
+    <mat-icon class="track-overlay-icon">play_arrow</mat-icon>
+  </div>
+  <div class="track-info">
+    <p class="track-title">{{ track.info.title }}</p>
+    <p class="track-author">{{ track.info.author }}</p>
+  </div>
+</div>

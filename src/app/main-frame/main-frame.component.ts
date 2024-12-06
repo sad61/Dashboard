@@ -19,6 +19,7 @@ import {
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { environment } from '../../environment';
 import { GeneralService } from '../general.service';
+import { FooterComponent } from './footer/footer.component';
 @Component({
   selector: 'app-main-frame',
   standalone: true,
@@ -28,6 +29,7 @@ import { GeneralService } from '../general.service';
     MatButtonModule,
     MatIconModule,
     MatDividerModule,
+    FooterComponent,
     ButtonsComponent,
     GuildContentComponent,
     RouterOutlet,

@@ -2,37 +2,57 @@
   display: grid;
   width: 100%;
   height: 100%;
-  grid-template-rows: 80% 1fr;
+  grid-template-rows: 82% auto;
   grid-template-areas:
     "player"
     "info";
-  justify-items: stretch;
-  align-items: stretch;
+
   border-radius: 10px;
   gap: 10px;
 }
 
 .player {
   grid-area: player;
-  display: block;
-  width: 100%;
-  height: 100%;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
   border-radius: 10px;
   overflow: hidden;
-  align-items: stretch;
-  justify-items: stretch;
-  justify-content: stretch;
+  align-items: center;
+  justify-items: center;
+  justify-content: center;
   background-color: var(--background-color-dark);
+  position: relative;
+  box-sizing: border-box;
 }
 
 .player-info-frame {
   grid-area: info;
-  width: 100%;
-  height: 100%;
+flex:1;
+  overflow: hidden; 
   background-color: var(--background-color-dark);
   border-radius: 10px;
 }
 
+.youtube-player, .spotify-div {
+  display: flex;
+flex:1;
+
+}
+
+
+.spotify-div {
+
+  display: flex; /* Enables Flexbox for the child */
+  align-items: center; /* Centers content vertically within .spotify-div */
+  justify-content: center; /* Centers content horizontally within .spotify-div */
+  justify-items: center;
+  width: 100%; /* Fills the width of the parent */
+  height: 50%; 
+  max-width: 100%; 
+  max-height: 100%; 
+
+}
 .spotify-player-div.selected {
   display: none;
 }

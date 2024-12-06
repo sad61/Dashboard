@@ -1,0 +1,164 @@
+<ng-container>
+  <div class="footer-main-frame">
+    <ng-container *ngIf="current">
+      <div class="footer-track-preview">
+        <app-track-container
+          [disableHoverEffects]="true"
+          [track]="current?.track"
+        ></app-track-container>
+      </div>
+    </ng-container>
+    <div class="footer-track-controls">
+      <div class="footer-controls">
+        <div class="footer-button-icon">
+          <button
+            class="footer-controls-button"
+            mat-icon-button
+            #tooltip="matTooltip"
+            matTooltip="Shuffle"
+            (click)="shuffle()"
+            [matTooltipShowDelay]="showDelay"
+            [matTooltipPosition]="showPosition"
+            [disabled]="!current"
+          >
+            <mat-icon class="footer-controls-icon small">shuffle</mat-icon>
+          </button>
+        </div>
+        <div class="footer-button-icon">
+          <button
+            class="footer-controls-button"
+            mat-icon-button
+            #tooltip="matTooltip"
+            matTooltip="Back"
+            (click)="backTrack()"
+            [matTooltipShowDelay]="showDelay"
+            [matTooltipPosition]="showPosition"
+            [disabled]="!current"
+          >
+            <mat-icon class="footer-controls-icon medium">
+              skip_previous
+            </mat-icon>
+          </button>
+        </div>
+        <ng-container *ngIf="!playing">
+          <div class="footer-button-icon">
+            <button
+              class="footer-controls-button central"
+              mat-icon-button
+              #tooltip="matTooltip"
+              matTooltip="Play"
+              (click)="togglePlay()"
+              [matTooltipShowDelay]="showDelay"
+              [matTooltipPosition]="showPosition"
+              [disabled]="!current"
+            >
+              <mat-icon class="footer-controls-icon big">play_arrow</mat-icon>
+            </button>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="playing">
+          <div class="footer-button-icon">
+            <button
+              class="footer-controls-button central"
+              mat-icon-button
+              #tooltip="matTooltip"
+              matTooltip="Pause"
+              (click)="togglePlay()"
+              [matTooltipShowDelay]="showDelay"
+              [matTooltipPosition]="showPosition"
+              [disabled]="!current"
+            >
+              <mat-icon class="footer-controls-icon big pause">pause</mat-icon>
+            </button>
+          </div>
+        </ng-container>
+        <div class="footer-button-icon">
+          <button
+            class="footer-controls-button"
+            mat-icon-button
+            #tooltip="matTooltip"
+            matTooltip="Next"
+            (click)="skipTrack()"
+            [matTooltipShowDelay]="showDelay"
+            [matTooltipPosition]="showPosition"
+            [disabled]="!current"
+          >
+            <mat-icon class="footer-controls-icon medium">skip_next</mat-icon>
+          </button>
+        </div>
+        <ng-container *ngIf="repeatMode === 'off'">
+          <div class="footer-button-icon">
+            <button
+              class="footer-controls-button"
+              mat-icon-button
+              #tooltip="matTooltip"
+              matTooltip="Loop"
+              (click)="loop()"
+              [matTooltipShowDelay]="showDelay"
+              [matTooltipPosition]="showPosition"
+              [disabled]="!current"
+            >
+              <mat-icon class="footer-controls-icon small">loop</mat-icon>
+            </button>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="repeatMode === 'queue'">
+          <div class="footer-button-icon">
+            <button
+              class="footer-controls-button"
+              mat-icon-button
+              #tooltip="matTooltip"
+              matTooltip="Loop"
+              (click)="loop()"
+              [matTooltipShowDelay]="showDelay"
+              [matTooltipPosition]="showPosition"
+              [disabled]="!current"
+            >
+              <mat-icon class="footer-controls-icon small highlighted">
+                loop
+              </mat-icon>
+            </button>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="repeatMode === 'track'">
+          <div class="footer-button-icon">
+            <button
+              class="footer-controls-button"
+              mat-icon-button
+              #tooltip="matTooltip"
+              matTooltip="Loop"
+              (click)="loop()"
+              [matTooltipShowDelay]="showDelay"
+              [matTooltipPosition]="showPosition"
+              [disabled]="!current"
+            >
+              <mat-icon class="footer-controls-icon small highlighted">
+                repeat_one
+              </mat-icon>
+            </button>
+          </div>
+        </ng-container>
+      </div>
+
+      <div class="footer-progressbar">
+        <div class="footer-progress-end">
+          {{ (position * 1000 | date: 'mm:ss') }}
+        </div>
+        <mat-slider [max]="maxPosition" [min]="0" [step]="1">
+          <input matSliderThumb [(ngModel)]="position" #slider />
+        </mat-slider>
+        <div class="footer-progress-end">
+          <ng-container *ngIf="current; else emptyCurrent">
+            {{ current.track.info.duration | date: 'mm:ss' }}
+          </ng-container>
+          <ng-template #emptyCurrent>
+            00:00
+          </ng-template>
+        </div>
+      </div>
+    </div>
+    <div class="footer-track-options">
+      <!-- You can add content here if necessary -->
+    </div>
+  </div>
+</ng-container>

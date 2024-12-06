@@ -1,0 +1,106 @@
+.track-container {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  overflow: hidden;
+  scrollbar-width: none;
+  z-index: 1;
+}
+
+.track-artwork-frame {
+  position: relative;
+  flex-shrink: 0;
+  width: 70px;
+  height: 70px;
+}
+
+.track-artwork {
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  background-size: cover;
+  background-position: center;
+}
+
+.track-overlay-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: none;
+  color: white;
+  width: 2.5rem;
+  height: 2.5rem;
+  font-size: 2.5rem;
+}
+
+.track-container:hover .track-overlay-icon {
+  display: block;
+}
+
+.track-container:hover {
+  background-color: #0a0a0a;
+}
+
+.track-container:hover .track-artwork {
+  filter: brightness(0.5);
+}
+
+.track-info {
+  display: flex; /* Ensure it's a flex container */
+  flex: 1;
+  flex-direction: column; /* Arrange children vertically */
+  gap: 10px; /* Adjust the gap between children */
+  overflow: hidden;
+  justify-content: flex-start; /* Align items at the top of the container */
+}
+
+.track-title,
+.track-author {
+  margin: 0;
+  color: white;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap; /* Prevent wrapping */
+}
+
+.track-author {
+  max-width: 100%;
+  display: inline-block;
+  height: fit-content;
+  width: fit-content;
+  font-weight: normal;
+  color: #b3b3b3;
+}
+
+.track-author:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 600px) {
+  .track-title,
+  .track-author {
+    white-space: normal;
+    text-overflow: clip;
+  }
+}
+
+.no-hover {
+  pointer-events: none; /* Disable interactions */
+}
+
+.no-hover:hover .track-overlay-icon,
+.no-hover:hover {
+  background-color: inherit; /* Prevent hover background color */
+}
+
+.no-hover:hover .track-artwork {
+  filter: none; /* Prevent brightness change */
+}
+
+.no-hover .track-author:hover {
+  text-decoration: none; /* Prevent underline */
+}

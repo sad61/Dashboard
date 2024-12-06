@@ -34,7 +34,6 @@ export class SocketService {
         this.socket$.next(this.socket);
         this.isConnected$.next(true);
       });
-      this.socket.on(`playerPause:636913623582769172`, (data: any) => console.log('recebi o pauseeee', data))
       this.socket.on('connect_error', (error) => {
         this.isConnected$.next(false); 
         if (retries < this.maxRetries) {
@@ -52,7 +51,6 @@ export class SocketService {
     };
 
     connect();
-    this.socket.emit('message', { text: 'Hello Server!' })
   }
 
   public getConnectionStatus(): Observable<boolean> {
