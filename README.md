@@ -1,4 +1,4 @@
-# Dashboard For (Osue Bot)[https://github.com/sad61/Osue_Nest]
+# Dashboard For [Osue Bot](https://github.com/sad61/Osue_Nest)
 IN DEVELOPMENT
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.0.2.
